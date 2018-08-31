@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
@@ -20,6 +21,8 @@ namespace Base
         public static bool HasValidValue(this IItem obj)
         {
             string s = obj.GetCheckRules().GetExpression(obj.GetValue());
+            Trace.WriteLine(s);
+
             return _compute(s);
         }
 

@@ -14,7 +14,7 @@
         public override string ToString()
         {
             return _operator.Display() 
-                + (_value is IItem ? ((IItem)_value).GetValue() :_value.ToString());
+                + (_value is IItem ? this.Convert(((IItem)_value).GetValue()) : this.Convert(_value));
         }
 
     }

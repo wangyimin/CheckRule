@@ -21,7 +21,7 @@ namespace Base
                 var el = _que.Dequeue();
 
                 Type type = el.GetType().GetGenericArguments()[0];
-                r = r + typeof(Extensions).GetMethod("Convert").MakeGenericMethod(type).Invoke(null, new object[] { el, target }) + " ";
+                r = r + typeof(Extensions).GetMethod("GetLogic").MakeGenericMethod(type).Invoke(null, new object[] { el, target }) + " ";
             }
 
             r = r.Substring(0, r.Length - 1) + ")";

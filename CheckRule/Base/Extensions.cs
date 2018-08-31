@@ -18,12 +18,39 @@ namespace Base
                             .Display;
         }
 
+        public static object Convert(this CheckRule check, object target)
+        {
+            return _convert(target);
+        }
+
         public static bool HasValidValue(this IItem obj)
         {
-            string s = obj.GetCheckRules().GetExpression(obj.GetValue());
+            string s = obj.GetCheckRules().GetExpression(_convert(obj.GetValue()));
             Trace.WriteLine(s);
 
             return _compute(s);
+        }
+
+        private static object _convert(object obj)
+        {
+            if (obj.GetType().Assembly == Assembly.GetExecutingAssembly())
+            {
+                throw new NotSupportedException("Unsupported object type");
+            }
+
+            if (obj.GetType() == typeof(DateTime))
+            {
+                return ((DateTime)obj).ToBinary();
+            }
+            else if (obj.GetType() == typeof(string))
+            {
+                throw new NotSupportedException("Unsupported object type");
+
+            }
+            else
+            {
+                return obj;
+            }
         }
 
         private static bool _compute(string s)
@@ -39,7 +66,7 @@ namespace Base
             return obj.GetValue() != null;
         }
 
-        public static string Convert<T>(this Expression<T> el, object target)
+        public static string GetLogic<T>(this Expression<T> el, object target)
         {
             Type type = el.GetType().GetGenericArguments()[0];
 

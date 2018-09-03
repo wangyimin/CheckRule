@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using System.Threading.Tasks;
 
 namespace Base
 {
@@ -18,52 +15,19 @@ namespace Base
                             .Display;
         }
 
-        public static object Convert(this CheckRule check, object target)
+        public static string GetExpression(this IItem obj)
         {
-            return _convert(target);
+            return obj.GetCheckRules().GetExpression(obj.GetValue());
+        }
+
+        public static bool IsNotNull(this IItem obj)
+        {
+            return obj.GetValue() != null;
         }
 
         public static bool HasValidValue(this IItem obj)
         {
-            string s = obj.GetCheckRules().GetExpression(_convert(obj.GetValue()));
-            Trace.WriteLine(s);
-
-            return _compute(s);
-        }
-
-        private static object _convert(object obj)
-        {
-            if (obj.GetType().Assembly == Assembly.GetExecutingAssembly())
-            {
-                throw new NotSupportedException("Unsupported object type");
-            }
-
-            if (obj.GetType() == typeof(DateTime))
-            {
-                return ((DateTime)obj).ToBinary();
-            }
-            else if (obj.GetType() == typeof(string))
-            {
-                throw new NotSupportedException("Unsupported object type");
-
-            }
-            else
-            {
-                return obj;
-            }
-        }
-
-        private static bool _compute(string s)
-        {
-            Task<bool> r = CSharpScript.EvaluateAsync<bool>(s);
-            r.Wait();
-
-            return r.Result;
-        }
-  
-        public static bool IsNotNull(this IItem obj)
-        {
-            return obj.GetValue() != null;
+            return obj.GetCheckRules().GetCheckResult(obj.GetValue());
         }
 
         public static string GetLogic<T>(this Expression<T> el, object target)
@@ -85,5 +49,6 @@ namespace Base
                 throw new InvalidOperationException("Bad element.");
             }
         }
+
     }
 }

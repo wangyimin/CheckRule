@@ -81,7 +81,7 @@ namespace Base
 
             if (Operator.IN != _operator)
             {
-                throw new InvalidOperationException("Unsupported operator[" + _operator.Display() + "].");
+                throw new InvalidOperationException("Need operator[IN]");
             }
 
             object[] val = _v2 as object[];
@@ -93,6 +93,40 @@ namespace Base
             else if (_v1.GetType() == typeof(long))
             {
                 return val.ToList().Where(el => (long)_v1 == (long)el).Count() != 0;
+            }
+            else
+            {
+                throw new NotSupportedException("Unsupported compare type[" + _v1.GetType().Name + "].");
+            }
+        }
+    }
+    public class BetweenComparison : IComparison
+    {
+        public bool Compare(Operator _operator, object _v1, object _v2)
+        {
+            if (_v1 == null || _v2 == null)
+            {
+                throw new ArgumentNullException("Null parameter.");
+            }
+
+            if (Operator.BETWEEN != _operator)
+            {
+                throw new InvalidOperationException("Need operator[BETWEEN].");
+            }
+
+            object[] val = _v2 as object[];
+            if (val.Length != 2)
+            {
+                throw new InvalidOperationException("Need two values for operator[BETWEEN].");
+            }
+
+            if (_v1.GetType() == typeof(int))
+            {
+                return (int)_v1 >= (int)val[0] && (int)_v1 <= (int)val[1];
+            }
+            else if (_v1.GetType() == typeof(long))
+            {
+                return (long)_v1 >= (long)val[0] && (long)_v1 <= (long)val[1];
             }
             else
             {

@@ -28,11 +28,12 @@ namespace Base
 
         public override string ToString()
         {
-            string r = _operator == Operator.IN ? " " + _operator.Display() + " [" : _operator.Display();
+            string r = _operator == Operator.IN || _operator == Operator.BETWEEN ?
+                " " + _operator.Display() + " [" : _operator.Display();
 
             _value.ToList().ForEach(el => { r = r + el + ","; });
 
-            return r.Substring(0, r.Length - 1) + (_operator == Operator.IN ? "]" : "");
+            return r.Substring(0, r.Length - 1) + (_operator == Operator.IN || _operator == Operator.BETWEEN ? "]" : "");
         }
 
         public bool GetCheckResult(object target)

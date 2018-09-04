@@ -16,6 +16,8 @@
         LE,
         [OperatorAttributes(Display = "in", Comparison = typeof(InComparison))]
         IN,
+        [OperatorAttributes(Display = "between", Comparison = typeof(BetweenComparison))]
+        BETWEEN,
         [OperatorAttributes(Display = "&&")]
         AND,
         [OperatorAttributes(Display = "||")]

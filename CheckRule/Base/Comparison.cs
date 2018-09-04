@@ -1,74 +1,102 @@
 ﻿using System;
+using System.Linq;
 
 namespace Base
 {
     public interface IComparison
     {
-        int Compare(object v1, object v2);
+        bool Compare(Operator _operator, object _v1, object _v2);
     }
 
     public class CommComparison : IComparison
     {
-        public int Compare(object v1, object v2)
+        public bool Compare(Operator _operator, object _v1, object _v2)
         {
-            if (v1 == null || v2 == null)
+            if (_v1 == null || _v2 == null)
             {
                 throw new ArgumentNullException("Null parameter.");
             }
 
-            if (v1.GetType() != v2.GetType())
+            object[] val = _v2 as object[];
+            if (Operator.GT.Equals(_operator))
+            {
+                return _compare(_v1, val[0]) > 0;
+            }
+            else if (Operator.GE.Equals(_operator))
+            {
+                return _compare(_v1, val[0]) >= 0;
+            }
+            else if (Operator.LT.Equals(_operator))
+            {
+                return _compare(_v1, val[0]) < 0;
+            }
+            else if (Operator.LE.Equals(_operator))
+            {
+                return _compare(_v1, val[0]) <= 0;
+            }
+            else if (Operator.EQ.Equals(_operator))
+            {
+                return _compare(_v1, val[0]) == 0;
+            }
+            else
+            {
+                throw new NotSupportedException("Unsupported logic operator[" + _operator + "].");
+            }
+        }
+
+        private int _compare(object _v1, object _v2)
+        { 
+            if (_v1.GetType() != _v2.GetType())
             {
                 throw new InvalidOperationException("Unable to comapre different type.");
             }
 
-            if (v1.GetType() == typeof(int))
+            if (_v1.GetType() == typeof(int))
             {
-                return ((int)v1).CompareTo((int)v2);
+                return ((int)_v1).CompareTo((int)_v2);
             }
-            else if (v1.GetType() == typeof(long))
+            else if (_v1.GetType() == typeof(long))
             {
-                return ((long)v1).CompareTo((long)v2);
+                return ((long)_v1).CompareTo((long)_v2);
             }
-            else if (v1.GetType() == typeof(DateTime))
+            else if (_v1.GetType() == typeof(DateTime))
             {
-                return (((DateTime)v1).ToBinary()).CompareTo(((DateTime)v2).ToBinary());
+                return (((DateTime)_v1).ToBinary()).CompareTo(((DateTime)_v2).ToBinary());
             }
             else
             {
-                throw new NotSupportedException("Unsupported compare type[" + v1.GetType().Name + "].");
+                throw new NotSupportedException("Unsupported compare type[" + _v1.GetType().Name + "].");
             }
         }
     }
 
-    public class CustComparison : IComparison
+    public class InComparison : IComparison
     {
-        public int Compare(object v1, object v2)
+        public bool Compare(Operator _operator, object _v1, object _v2)
         {
-            if (v1 == null || v2 == null)
+            if (_v1 == null || _v2 == null)
             {
                 throw new ArgumentNullException("Null parameter.");
             }
 
-            if (v1.GetType() != v2.GetType())
+            if (Operator.IN != _operator)
             {
-                throw new InvalidOperationException("Unable to comapre different type.");
+                throw new InvalidOperationException("Unsupported operator[" + _operator.Display() + "].");
             }
 
-            if (v1.GetType() == typeof(int))
+            object[] val = _v2 as object[];
+
+            if (_v1.GetType() == typeof(int))
             {
-                return ((int)v1).CompareTo((int)v2);
+                return val.ToList().Where(el => (int)_v1 == (int)el).Count() != 0;
             }
-            else if (v1.GetType() == typeof(long))
+            else if (_v1.GetType() == typeof(long))
             {
-                return ((long)v1).CompareTo((long)v2);
-            }
-            else if (v1.GetType() == typeof(DateTime))
-            {
-                return (((DateTime)v1).ToBinary()).CompareTo(((DateTime)v2).ToBinary());
+                return val.ToList().Where(el => (long)_v1 == (long)el).Count() != 0;
             }
             else
             {
-                throw new NotSupportedException("Unsupported compare type[" + v1.GetType().Name + "].");
+                throw new NotSupportedException("Unsupported compare type[" + _v1.GetType().Name + "].");
             }
         }
     }

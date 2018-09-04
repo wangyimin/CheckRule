@@ -7,18 +7,32 @@ namespace Base
     public class CheckRule
     {
         private Operator _operator;
-        private object _value;
+        private object[] _value;
 
         public CheckRule(Operator _operator, object _value)
         {
             this._operator = _operator;
-            this._value = _value;
+
+            if (_value.GetType().IsArray)
+            {
+                object[] val = _value as object[];
+                this._value = new object[val.Length];
+                val.CopyTo(this._value, 0);
+            }
+            else
+            {
+                this._value = new object[1];
+                this._value[0] = _value;
+            }
         }
 
         public override string ToString()
         {
-            return _operator.Display() 
-                + (_value is IItem ? ((IItem)_value).GetValue() : _value);
+            string r = _operator == Operator.IN ? " " + _operator.Display() + " [" : _operator.Display();
+
+            _value.ToList().ForEach(el => { r = r + el + ","; });
+
+            return r.Substring(0, r.Length - 1) + (_operator == Operator.IN ? "]" : "");
         }
 
         public bool GetCheckResult(object target)
@@ -34,30 +48,7 @@ namespace Base
                 impl = (IComparison)Activator.CreateInstance(Type.GetType(attr.Comparison.FullName));
             }
 
-            if (Operator.GT.Equals(_operator))
-            {
-                return impl.Compare(target, _value) > 0;
-            }
-            else if (Operator.GE.Equals(_operator))
-            {
-                return impl.Compare(target, _value) >= 0;
-            }
-            else if (Operator.LT.Equals(_operator))
-            {
-                return impl.Compare(target, _value) < 0;
-            }
-            else if (Operator.LE.Equals(_operator))
-            {
-                return impl.Compare(target, _value) <= 0;
-            }
-            else if (Operator.EQ.Equals(_operator))
-            {
-                return impl.Compare(target, _value) == 0;
-            }
-            else
-            {
-                throw new NotSupportedException("Unsupported logic operator[" + _operator + "].");
-            }
+            return impl.Compare(_operator, target, _value);
         }
     }
 }

@@ -6,15 +6,15 @@
         EQ,
         [OperatorAttributes(Display = "<>")]
         NE,
-        [OperatorAttributes(Display = ">", Comparison = typeof(CommComparison))]
+        [OperatorAttributes(Display = ">")]
         GT,
         [OperatorAttributes(Display = ">=")]
         GE,
-        [OperatorAttributes(Display = "<", Comparison = typeof(CustComparison))]
+        [OperatorAttributes(Display = "<")]
         LT,
         [OperatorAttributes(Display = "<=")]
         LE,
-        [OperatorAttributes(Display = "in")]
+        [OperatorAttributes(Display = "in", Comparison = typeof(InComparison))]
         IN,
         [OperatorAttributes(Display = "&&")]
         AND,

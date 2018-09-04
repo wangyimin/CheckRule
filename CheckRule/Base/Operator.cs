@@ -6,11 +6,11 @@
         EQ,
         [OperatorAttributes(Display = "<>")]
         NE,
-        [OperatorAttributes(Display = ">")]
+        [OperatorAttributes(Display = ">", Comparison = typeof(CommComparison))]
         GT,
         [OperatorAttributes(Display = ">=")]
         GE,
-        [OperatorAttributes(Display = "<")]
+        [OperatorAttributes(Display = "<", Comparison = typeof(CustComparison))]
         LT,
         [OperatorAttributes(Display = "<=")]
         LE,

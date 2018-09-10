@@ -45,28 +45,16 @@ namespace Base
         }
 
         private int _compare(object _v1, object _v2)
-        { 
-            if (_v1.GetType() != _v2.GetType())
-            {
-                throw new InvalidOperationException("Unable to comapre different type.");
-            }
+        {
+            if (_v1 != null && _v2 != null && _v1.GetType() != _v2.GetType())
+                throw new InvalidOperationException("Need same type");
 
-            if (_v1.GetType() == typeof(int))
-            {
-                return ((int)_v1).CompareTo((int)_v2);
-            }
-            else if (_v1.GetType() == typeof(long))
-            {
-                return ((long)_v1).CompareTo((long)_v2);
-            }
-            else if (_v1.GetType() == typeof(DateTime))
-            {
-                return (((DateTime)_v1).ToBinary()).CompareTo(((DateTime)_v2).ToBinary());
-            }
+            if (_v1 != null)
+                return (int)_v1.GetType().GetMethod("CompareTo", new Type[] { _v1.GetType() }).Invoke(_v1, new object[] { _v2 });
+            else if (_v2 != null)
+                return -1;
             else
-            {
-                throw new NotSupportedException("Unsupported compare type[" + _v1.GetType().Name + "].");
-            }
+                return 0;
         }
     }
 
